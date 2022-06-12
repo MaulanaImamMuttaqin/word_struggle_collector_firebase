@@ -1,24 +1,48 @@
-import React from 'react';
-import logo from './logo.svg';
+import { useEffect, useState } from 'react';
 import './App.css';
+import { doc, getDoc, onSnapshot, setDoc } from 'firebase/firestore';
+import { db } from './firebase';
+import TypingFieldSinglePlayer from './components/TypingFieldSinglePlayer';
+import { storage } from './utils/storage';
 
 function App() {
+
+  // const [count, setCount] = useState<any>(0)
+  // const docRef = doc(db, "users_scores", "GlFBlSL87ou8GrvljiWv")
+  // const docRef = doc(db, "users_scores", "GlFBlSL87ou8GrvljiWv")
+
+  // useEffect(() => {
+  //   async function getData() {
+  //     const docsnap = await getDoc(docRef);
+  //     setCount(docsnap.data())
+  //     console.log(docsnap.data())
+  //   }
+  //   getData()
+  // }, [])
+
+  // useEffect(() => {
+  //   onSnapshot(
+  //     docRef,
+  //     { includeMetadataChanges: true },
+  //     (doc) => {
+  //       setCount(doc.data())
+  //     }
+  //   );
+  // }, [])
+
+  // const updateData = async (counter: number) => {
+  //   await setDoc(docRef, {
+  //     count: count.count + counter
+  //   });
+  // }
+
+
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className='h-screen w-screen overflow-hidden bg-dark-blue-gradient' >
+        <TypingFieldSinglePlayer />
+      </div>
     </div>
   );
 }
