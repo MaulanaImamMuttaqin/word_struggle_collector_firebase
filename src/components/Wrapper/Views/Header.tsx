@@ -1,16 +1,16 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext } from 'react'
 import { UserIcon } from '@heroicons/react/solid'
 import { AuthContext } from '../../AuthContext/AuthContextProvider'
+import { logout } from '../../../firebase'
 function Header() {
-    const { username: {
-        nameIsSet,
-        setNameIsSet,
+    const {
         name
-    } } = useContext(AuthContext)
-    const logout = () => {
+    } = useContext(AuthContext)
+    const SignOut = () => {
         let signout = window.confirm("Keluar dari Akun Anda?")
         if (!signout) return;
-        setNameIsSet(false)
+        logout()
+        // setNameIsSet(false)
     }
     return (
         <div className='absolute w-screen h-20 flex items-center text-white justify-end px-10 z-30'>
@@ -37,8 +37,8 @@ function Header() {
                             </>
                         } */}
                         {
-                            nameIsSet &&
-                            <li className='px-4 py-2 hover:bg-gray-600 hover:text-white hover:cursor-pointer' onClick={logout}>Sign Out</li>
+                            name &&
+                            <li className='px-4 py-2 hover:bg-gray-600 hover:text-white hover:cursor-pointer' onClick={SignOut}>Sign Out</li>
                             // <li className='px-4 py-2 hover:bg-gray-600 hover:text-white hover:cursor-pointer' onClick={() => navigate('/login')}>Sign In</li>
                         }
                     </ul>

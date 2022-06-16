@@ -1,28 +1,19 @@
-import { doc } from 'firebase/firestore'
-import React, { createContext, Dispatch, SetStateAction, useEffect, useReducer, useState } from 'react'
-import { db } from '../../firebase'
-import { storage } from '../../utils/storage'
-import { authReducer, IAction, IAuthActions, IAuthState } from './reducer'
-import authStates from './states'
+import { collection, doc, getDocs, query, where } from 'firebase/firestore'
+import React, { createContext, Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { auth, db } from '../../firebase'
+import { useAuthState } from "react-firebase-hooks/auth"
+
 
 
 interface IAuthContext {
-  username: {
-    name: string,
-    nameIsSet: boolean,
-    nameSetter: (name: string) => void,
-    setNameIsSet: Dispatch<SetStateAction<boolean>>
-  },
+  name: string | null,
+  setName: Dispatch<SetStateAction<string | null>>,
   docRef?: any
 }
 
 const initialContext = {
-  username: {
-    name: "",
-    nameIsSet: true,
-    nameSetter: (name: string, regis?: boolean) => { },
-    setNameIsSet: () => { }
-  },
+  name: null,
+  setName: () => { },
   docRef: null
 }
 export const AuthContext = createContext<IAuthContext>(initialContext)
@@ -31,38 +22,37 @@ export const AuthContext = createContext<IAuthContext>(initialContext)
 
 
 function AuthContextProvider({ children }: { children: JSX.Element }) {
-  const [nameIsSet, setNameIsSet] = useState<boolean>(true)
   const [docRef, setDocRef] = useState<any>()
-  const [name, setName] = useState(storage.getName() || "")
+  const [name, setName] = useState<string | null>(null)
+  const [user, loading, error] = useAuthState(auth);
 
-  const nameSetter = (name: string, regis: boolean = false) => {
-    if (!regis) {
-      storage.setName(name)
-      setDocRef(doc(db, "users_scores", name))
-      setNameIsSet(true)
-      setName(name)
-    } else {
 
+  const fetchUserName = async () => {
+    try {
+      const q = query(collection(db, "users"), where("uid", "==", user?.uid));
+      const document = await getDocs(q);
+      const data = document.docs[0].data();
+
+      setName(data.name);
+      setDocRef(doc(db, "users_scores", data.uid))
+    } catch (err) {
+      console.error(err);
     }
-  }
+  };
 
   useEffect(() => {
-    console.log("check user exist")
-    if (!storage.getName() && nameIsSet) {
-      setNameIsSet(false)
-    } else {
-      setDocRef(doc(db, "users_scores", storage.getName()))
-    }
-  }, [nameIsSet])
+    if (loading) return;
+    if (!user) return setName(null);
+
+    fetchUserName();
+  }, [user, loading]);
+
+
 
   return (
     <AuthContext.Provider value={{
-      username: {
-        name,
-        nameIsSet,
-        setNameIsSet,
-        nameSetter,
-      },
+      name,
+      setName,
       docRef
     }}>
       {children}

@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react'
+import { useReducer } from 'react'
 import typingFieldStates from '../states/typingFieldStates'
 import typingPerformanceStates from '../states/typingPerformanceStates'
 import { typingFieldReducer } from './typingFieldReducer'

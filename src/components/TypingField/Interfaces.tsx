@@ -50,8 +50,7 @@ export interface ITPState {
 
 
 export interface ITFProps {
-    words: Array<string>,
-    loading: boolean,
+    words: Array<string>
     input: {
         inputRef: RefObject<HTMLInputElement>,
         inputHandler: () => void,

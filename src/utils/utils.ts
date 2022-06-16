@@ -1,9 +1,15 @@
 import typingFieldStates from "../components/TypingField/states/typingFieldStates"
 import { words_list } from "../constant/words"
-export const getStandardDeviation = (array: Array<number>): number => {
+export const getStandardDeviation = (array: Array<number>, max?: number | null): number => {
     const n = array.length
     const mean = array.reduce((a, b) => a + b) / n
-    return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n)
+    const result = Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n)
+    if (max) {
+        if (result > max) {
+            return max
+        }
+    }
+    return result
 }
 
 export const calculateTypingSpeed = (char: number, wrong: number) => {

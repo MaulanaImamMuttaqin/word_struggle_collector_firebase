@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+// import { useEffect, useState } from 'react';
 import './App.css';
-import { doc, getDoc, onSnapshot, setDoc } from 'firebase/firestore';
-import { db } from './firebase';
+// import { doc, getDoc, onSnapshot, setDoc } from 'firebase/firestore';
+// import { db } from './firebase';
 import TypingFieldSinglePlayer from './components/TypingFieldSinglePlayer';
-import { storage } from './utils/storage';
+// import { storage } from './utils/storage';
 import Wrapper from './components/Wrapper';
 import AuthContextProvider from './components/AuthContext/AuthContextProvider';
 

@@ -2,7 +2,7 @@ import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
 import React, { ChangeEvent, useContext, useEffect, useState } from 'react'
 import useKeyPress from '../../customHooks/useKeyPress'
 import { db } from '../../firebase'
-import { storage } from '../../utils/storage'
+// import { storage } from '../../utils/storage'
 import { calculateTypingSpeed, getStandardDeviation, get_words_random } from '../../utils/utils'
 import { AuthContext } from '../AuthContext/AuthContextProvider'
 import { ITFActions, ITPActions } from './Interfaces'
@@ -13,8 +13,7 @@ import Refs from './refs'
 
 
 const TypingField = ({ children }: { children: any }) => {
-
-    const { docRef } = useContext(AuthContext)
+    const { docRef, name } = useContext(AuthContext)
     const { TFstate, TPstate, TFDispatch, TPDispatch } = Reducers()
     const { letterRef, inputRef, exessElContainer, focusCoverRef } = Refs()
     const mousePressed = useKeyPress("mouse", "mouse", window)
@@ -22,7 +21,7 @@ const TypingField = ({ children }: { children: any }) => {
     // const [name, setName] = useState(storage.getName() || "")
 
 
-    const [words, setWords] = useState<Array<string>>(get_words_random())
+    const [words, setWords] = useState<Array<string>>(["begin"])
 
     const [ryhtmWord, setRythmWord] = useState<Array<number>>([])
     const [SDList, setSDList] = useState<Array<any>>([])
@@ -119,7 +118,8 @@ const TypingField = ({ children }: { children: any }) => {
                 word: words[TFstate.HLIndex],
                 totalPeak: wrgLettTotal,
                 standDeviation: getStandardDeviation(rythm),
-                calStandDeviation: getStandardDeviation(rythm) * (wrgLettTotal < 1 ? 1 : wrgLettTotal),
+                calcStanDev: wrgLettTotal + 1 + (getStandardDeviation(rythm, 100) / 100),
+                // calStandDeviation: getStandardDeviation(rythm) * (wrgLettTotal < 1 ? 1 : wrgLettTotal),
                 rythm: JSON.stringify(rythm),
                 correct: isCorrect
             }])
@@ -199,10 +199,13 @@ const TypingField = ({ children }: { children: any }) => {
         inputRef.current!.blur()
     }, [TFstate.typingStarted])
 
-
+    useEffect(() => {
+        restart(true)
+    }, [name])
 
     useEffect(() => {
         inputRef.current!.focus()
+        setWords(get_words_random())
     }, [])
 
 
@@ -234,15 +237,18 @@ const TypingField = ({ children }: { children: any }) => {
     const updateData = async () => {
         let obj: any = {};
         SDList.forEach(l => {
-            obj["words_score." + l.word] = l.standDeviation
+            obj["words_score." + l.word] = l.calcStanDev
         })
 
         let update_data = {
             "speed": TPstate.speed,
             ...obj
         }
-
-        await updateDoc(docRef, update_data);
+        try {
+            await updateDoc(docRef, update_data);
+        } catch (e) {
+            await setDoc(docRef, update_data);
+        }
     }
 
     const focusInput = (): void => {
@@ -271,7 +277,7 @@ const TypingField = ({ children }: { children: any }) => {
     }
 
     return <div className="h-screen center">
-        {children(props)}\
+        {children(props)}
     </div>
 
 }

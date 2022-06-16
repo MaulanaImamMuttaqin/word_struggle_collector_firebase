@@ -1,4 +1,4 @@
-import React, { Ref, useRef } from 'react'
+import { useRef } from 'react'
 
 function Refs() {
     const letterRef = useRef<Array<HTMLDivElement>>([])

@@ -32,11 +32,11 @@ function TestResults({ ...props }: { TFstate: ITFState, TPstate: ITPState, SDLis
 
                     <>
                         <div className=" w-full p-5 overflow-y-auto">
-                            <h2 className="tracking-wide font-semibold text-center">here's your score for each word that you type</h2>
-                            <h3 className="text-sm mb-5">(the lower the better)</h3>
+                            <h2 className="tracking-wide font-semibold text-center">ini adalah hasil nilai dari kata yang sudah diketik</h2>
+                            <h3 className="text-sm mb-5">(makin kecil makin bagus)</h3>
                             <div className="p-2 text-left">
                                 {sorted.map((w: any, i) => (
-                                    <p key={i}>{w.word} : {w.standDeviation}</p>
+                                    <p key={i}>{w.word} : {w.calcStanDev}</p>
                                 ))}
                             </div>
                         </div>
@@ -55,11 +55,11 @@ function TestResults({ ...props }: { TFstate: ITFState, TPstate: ITPState, SDLis
 
             </div>
 
-            <div className={`h-[370px] w-[450px] px-5 ml-10 ${(props.TFstate.timer === 0 && !props.TFstate.typingStarted) && 'translate-y-10 opacity-0 w-0 p-0 ml-0'} overflow-hidden  transition-all  text-white border border-white rounded-xl`}>
+            {/* <div className={`h-[370px] w-[450px] px-5 ml-10 ${(props.TFstate.timer === 0 && !props.TFstate.typingStarted) && 'translate-y-10 opacity-0 w-0 p-0 ml-0'} overflow-hidden  transition-all  text-white border border-white rounded-xl`}>
                 <div className='text-left w-full h-full pt-2'>
                     <pre>{JSON.stringify(reversed, null, 1)}</pre>
                 </div>
-            </div>
+            </div> */}
         </>
     )
 }
