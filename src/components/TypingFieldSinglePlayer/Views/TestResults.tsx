@@ -55,11 +55,11 @@ function TestResults({ ...props }: { TFstate: ITFState, TPstate: ITPState, SDLis
 
             </div>
 
-            {/* <div className={`h-[370px] w-[450px] p-10 ml-10 ${(props.TFstate.timer === 0 && !props.TFstate.typingStarted) && 'translate-y-10 opacity-0 w-0 p-0 ml-0'} overflow-hidden  transition-all  text-white flex flex-col items-center justify-between border border-white rounded-xl`}>
-                <div className='flex  border border-white flex-col w-full h-full pt-10'>
-                    <pre>{JSON.stringify(reversed, null, 4)}</pre>
+            <div className={`h-[370px] w-[450px] px-5 ml-10 ${(props.TFstate.timer === 0 && !props.TFstate.typingStarted) && 'translate-y-10 opacity-0 w-0 p-0 ml-0'} overflow-hidden  transition-all  text-white border border-white rounded-xl`}>
+                <div className='text-left w-full h-full pt-2'>
+                    <pre>{JSON.stringify(reversed, null, 1)}</pre>
                 </div>
-            </div> */}
+            </div>
         </>
     )
 }

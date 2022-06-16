@@ -23,6 +23,6 @@ export const get_words_random = (): Array<string> => {
     while (words_to_typed.length < 200) {
         words_to_typed.push(words_list[random_int(words_list.length)])
     }
-    console.log(words_to_typed)
+    // console.log(words_to_typed)
     return words_to_typed
 }

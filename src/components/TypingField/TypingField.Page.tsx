@@ -1,9 +1,10 @@
-import { doc, setDoc, updateDoc } from 'firebase/firestore'
-import React, { ChangeEvent, useEffect, useState } from 'react'
+import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
+import React, { ChangeEvent, useContext, useEffect, useState } from 'react'
 import useKeyPress from '../../customHooks/useKeyPress'
 import { db } from '../../firebase'
 import { storage } from '../../utils/storage'
 import { calculateTypingSpeed, getStandardDeviation, get_words_random } from '../../utils/utils'
+import { AuthContext } from '../AuthContext/AuthContextProvider'
 import { ITFActions, ITPActions } from './Interfaces'
 import Reducers from './reducers/Reducers'
 import Refs from './refs'
@@ -12,23 +13,32 @@ import Refs from './refs'
 
 
 const TypingField = ({ children }: { children: any }) => {
+
+    const { docRef } = useContext(AuthContext)
     const { TFstate, TPstate, TFDispatch, TPDispatch } = Reducers()
     const { letterRef, inputRef, exessElContainer, focusCoverRef } = Refs()
     const mousePressed = useKeyPress("mouse", "mouse", window)
 
     // const [name, setName] = useState(storage.getName() || "")
-    const [docRef, setDocRef] = useState<any>()
+
 
     const [words, setWords] = useState<Array<string>>(get_words_random())
 
     const [ryhtmWord, setRythmWord] = useState<Array<number>>([])
     const [SDList, setSDList] = useState<Array<any>>([])
 
+
+    const [wrgIncremented, setWrgIncremented] = useState<boolean>(false)
+    // const [peakDetect, setPeakDetect] = useState<boolean | null>(null)
     const [wrgLettTotal, setWrgLettTotal] = useState<number>(0)
     const [ifWordStarted, setIfWordStarted] = useState<boolean>(false)
 
-    const [nameIsSet, setNameIsSet] = useState<boolean>(false)
     // const [letWrgInd , setLetWrgInd] = useState()
+
+    // let wrgLettTotal = 0
+    let peakDetect = false
+    // let wrgIncremented = false
+    // let ifWordStarted = false
 
     const inputHandler = (e: ChangeEvent<HTMLInputElement>) => {
         TFDispatch({ type: ITFActions.START })
@@ -75,9 +85,23 @@ const TypingField = ({ children }: { children: any }) => {
 
         if ((typedCorrect && typedCorrect != null) || !ifWordStarted) {
             setRythmWord(p => [...p, Math.round(Date.now() / 10)])
+            // ifWordStarted = true
+            peakDetect = false
+            // wrgIncremented = false
             setIfWordStarted(true)
+            // setPeakDetect(false)
+            setWrgIncremented(false)
         } else {
+            peakDetect = true
+            // setPeakDetect(true)
+        }
+
+        if (peakDetect && !wrgIncremented) {
+            // wrgLettTotal++
+            // wrgIncremented = true
             setWrgLettTotal(p => p + 1)
+            setWrgIncremented(true)
+            // console.log("wrong")
         }
 
         // if the user pressed space move to next word and check the previously typed word if correct or not 
@@ -86,21 +110,26 @@ const TypingField = ({ children }: { children: any }) => {
             if (!typedCorrect || !isCorrect) return;
             if (word === "") return inputRef.current!.value = ""
 
-
+            console.log(wrgLettTotal)
             TFDispatch({ type: ITFActions.SPACED })
             if (isCorrect) TPDispatch({ type: ITPActions.CORRECT, payload: wrongChar })
             else TPDispatch({ type: ITPActions.INCORRECT, payload: wrongChar })
             let rythm = calculateRyhtm(ryhtmWord)
             setSDList(p => [...p, {
                 word: words[TFstate.HLIndex],
-                standDeviation: getStandardDeviation(rythm) + (wrgLettTotal * 2),
+                totalPeak: wrgLettTotal,
+                standDeviation: getStandardDeviation(rythm),
+                calStandDeviation: getStandardDeviation(rythm) * (wrgLettTotal < 1 ? 1 : wrgLettTotal),
                 rythm: JSON.stringify(rythm),
                 correct: isCorrect
             }])
             inputRef.current!.value = ""
             setRythmWord([])
+            // wrgLettTotal = 0
             setWrgLettTotal(0)
+            // ifWordStarted = false
             setIfWordStarted(false)
+
         }
     }
 
@@ -157,11 +186,7 @@ const TypingField = ({ children }: { children: any }) => {
         return () => clearInterval(timerInterval)
     }, [TFstate.typingStarted, TFstate.timer, TFstate.isPaused])
 
-    useEffect(() => {
-        if (!storage.getName()) {
-            setNameIsSet(false)
-        }
-    }, [])
+
 
 
     useEffect(() => {
@@ -181,11 +206,6 @@ const TypingField = ({ children }: { children: any }) => {
     }, [])
 
 
-    const nameSetter = (name: string) => {
-        storage.setName(name)
-        setDocRef(doc(db, "users_scores", name))
-        setNameIsSet(true)
-    }
 
 
     const restart = (new_test?: boolean) => {
@@ -221,6 +241,7 @@ const TypingField = ({ children }: { children: any }) => {
             "speed": TPstate.speed,
             ...obj
         }
+
         await updateDoc(docRef, update_data);
     }
 
@@ -230,10 +251,6 @@ const TypingField = ({ children }: { children: any }) => {
 
     const props = {
         words,
-        username: {
-            nameIsSet,
-            nameSetter,
-        },
         input: {
             inputRef,
             inputHandler,

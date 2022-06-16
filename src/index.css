@@ -34,3 +34,12 @@ body {
 .word-normal {
   @apply text-xl text-gray-600
 }
+
+
+#profile:hover>#profile-dropdown {
+  @apply top-[80px] opacity-100 visible
+}
+
+#profile:hover>div:first-child {
+  @apply text-dark-blue-gradient bg-white cursor-pointer
+}

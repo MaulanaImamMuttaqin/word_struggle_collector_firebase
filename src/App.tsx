@@ -4,6 +4,8 @@ import { doc, getDoc, onSnapshot, setDoc } from 'firebase/firestore';
 import { db } from './firebase';
 import TypingFieldSinglePlayer from './components/TypingFieldSinglePlayer';
 import { storage } from './utils/storage';
+import Wrapper from './components/Wrapper';
+import AuthContextProvider from './components/AuthContext/AuthContextProvider';
 
 function App() {
 
@@ -41,7 +43,11 @@ function App() {
   return (
     <div className="App">
       <div className='h-screen w-screen overflow-hidden bg-dark-blue-gradient' >
-        <TypingFieldSinglePlayer />
+        <AuthContextProvider>
+          <Wrapper>
+            <TypingFieldSinglePlayer />
+          </Wrapper>
+        </AuthContextProvider>
       </div>
     </div>
   );
