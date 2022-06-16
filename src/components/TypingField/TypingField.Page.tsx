@@ -10,6 +10,12 @@ import Reducers from './reducers/Reducers'
 import Refs from './refs'
 
 
+// const stageMinMax = {
+//     1 : 0,
+//     2 : 10,
+//     3 : 20,
+//     4 : 30
+// }
 
 
 const TypingField = ({ children }: { children: any }) => {
@@ -47,7 +53,7 @@ const TypingField = ({ children }: { children: any }) => {
         let word = e.target.value
         let word_arr = word.split("")
         let typedCorrect: boolean | null = words[TFstate.HLIndex].startsWith(word.trim())
-
+        let excessive = false
 
         TFDispatch({ type: ITFActions.TYPED, payload: word })
         if (word.length > TFstate.wordTyped.length) {
@@ -70,7 +76,7 @@ const TypingField = ({ children }: { children: any }) => {
         if (word_arr.length > words[TFstate.HLIndex].length) {
             let exessCont = exessElContainer.current[TFstate.HLIndex]
             exessCont.innerHTML = ""
-
+            excessive = true
             word_arr.slice(words[TFstate.HLIndex].length, word_arr.length).forEach((w, i) => {
                 let newEl = document.createElement("SPAN")
                 let text = document.createTextNode(w)
@@ -80,27 +86,22 @@ const TypingField = ({ children }: { children: any }) => {
             })
         } else {
             exessElContainer.current[TFstate.HLIndex].innerHTML = ""
+            excessive = false
         }
 
         if ((typedCorrect && typedCorrect != null) || !ifWordStarted) {
             setRythmWord(p => [...p, Math.round(Date.now() / 10)])
-            // ifWordStarted = true
             peakDetect = false
-            // wrgIncremented = false
             setIfWordStarted(true)
-            // setPeakDetect(false)
             setWrgIncremented(false)
         } else {
             peakDetect = true
-            // setPeakDetect(true)
         }
 
-        if (peakDetect && !wrgIncremented) {
-            // wrgLettTotal++
-            // wrgIncremented = true
+        if (peakDetect && !wrgIncremented && !excessive) {
             setWrgLettTotal(p => p + 1)
             setWrgIncremented(true)
-            // console.log("wrong")
+            console.log("wrong")
         }
 
         // if the user pressed space move to next word and check the previously typed word if correct or not 
@@ -242,6 +243,7 @@ const TypingField = ({ children }: { children: any }) => {
 
         let update_data = {
             "speed": TPstate.speed,
+            "timestamp": Math.round(new Date().getTime() / 1000),
             ...obj
         }
         try {

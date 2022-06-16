@@ -8,7 +8,7 @@ function TestResults({ ...props }: { TFstate: ITFState, TPstate: ITPState, SDLis
     const [showDetail, setShowDetail] = useState<boolean>(false)
     let reversed = props.SDList.slice().reverse()
     let sorted = [...props.SDList].sort((a: any, b: any) => {
-        return a.standDeviation - b.standDeviation;
+        return a.calcStanDev - b.calcStanDev;
     }).slice().reverse()
     return (
         <>
