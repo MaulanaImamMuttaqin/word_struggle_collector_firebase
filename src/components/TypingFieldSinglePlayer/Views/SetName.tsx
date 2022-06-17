@@ -5,7 +5,12 @@ import { auth, signInWithGoogle } from "../../../firebase";
 
 function SetName({ ...props }: { name: string | null, setName: Dispatch<SetStateAction<string | null>> }) {
     const [user, loading, error] = useAuthState(auth)
-
+    const [isLoading, setIsLoading] = useState<boolean>(false)
+    const loginWithGoogle = async () => {
+        setIsLoading(true)
+        await signInWithGoogle()
+        setIsLoading(false)
+    }
     if (user) return <></>
     return (
         <div className='absolute h-screen w-screen center z-50 filter backdrop-blur-sm'>
@@ -13,8 +18,8 @@ function SetName({ ...props }: { name: string | null, setName: Dispatch<SetState
 
                 <h1 className='text-xl tracking-widest'>Anda Belum Masuk</h1>
                 <p>Masuk dengan menggunakan akun Google Anda</p>
-                <button onClick={signInWithGoogle} className='bg-blue-600 py-2.5 px-5 rounded-lg hover:bg-blue-500 transition duration-200 uppercase font-bold tracking-wide'>Masuk</button>
-                {loading && <p>Loading...</p>}
+                <button onClick={loginWithGoogle} className='bg-blue-600 py-2.5 px-5 rounded-lg hover:bg-blue-500 transition duration-200 uppercase font-bold tracking-wide'>Masuk</button>
+                {(loading || isLoading) && <p>Loading...</p>}
             </div>
         </div>
     )

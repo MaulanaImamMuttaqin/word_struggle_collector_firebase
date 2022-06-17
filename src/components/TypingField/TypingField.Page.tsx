@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
+import { collection, doc, getDoc, query, setDoc, updateDoc, where } from 'firebase/firestore'
 import React, { ChangeEvent, useContext, useEffect, useState } from 'react'
 import useKeyPress from '../../customHooks/useKeyPress'
 import { db } from '../../firebase'
@@ -237,8 +237,10 @@ const TypingField = ({ children }: { children: any }) => {
 
     const updateData = async () => {
         let obj: any = {};
+        let objNew: any = {};
         SDList.forEach(l => {
             obj["words_score." + l.word] = l.calcStanDev
+            objNew[l.word] = l.calcStanDev
         })
 
         let update_data = {
@@ -246,10 +248,17 @@ const TypingField = ({ children }: { children: any }) => {
             "timestamp": Math.round(new Date().getTime() / 1000),
             ...obj
         }
+
+        let new_data = {
+            "speed": TPstate.speed,
+            "timestamp": Math.round(new Date().getTime() / 1000),
+            "words_score": objNew
+        }
+
         try {
             await updateDoc(docRef, update_data);
         } catch (e) {
-            await setDoc(docRef, update_data);
+            await setDoc(docRef, new_data);
         }
     }
 
