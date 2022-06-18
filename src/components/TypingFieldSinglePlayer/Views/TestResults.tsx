@@ -35,6 +35,7 @@ function TestResults({ ...props }: { TFstate: ITFState, TPstate: ITPState, SDLis
                             <h2 className="tracking-wide font-semibold text-center">ini adalah hasil nilai dari kata yang sudah diketik</h2>
                             <h3 className="text-sm mb-5">(makin kecil makin bagus)</h3>
                             <div className="p-2 text-left">
+                                {/* <pre>{JSON.stringify(reversed, null, 1)}</pre> */}
                                 {sorted.map((w: any, i) => (
                                     <p key={i}>{w.word} : {w.calcStanDev}</p>
                                 ))}
@@ -56,7 +57,7 @@ function TestResults({ ...props }: { TFstate: ITFState, TPstate: ITPState, SDLis
             </div>
 
             <div className={`h-[370px] w-[450px] px-5 ml-10 ${(props.TFstate.timer === 0 && !props.TFstate.typingStarted) && 'translate-y-10 opacity-0 w-0 p-0 ml-0'} overflow-hidden  transition-all  text-white border border-white rounded-xl`}>
-                <div className='text-left w-full h-full pt-2'>
+                <div className='text-left w-full h-full pt-2 overflow-y-auto'>
                     <pre>{JSON.stringify(reversed, null, 1)}</pre>
                 </div>
             </div>

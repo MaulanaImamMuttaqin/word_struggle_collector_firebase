@@ -99,9 +99,10 @@ const TypingField = ({ children }: { children: any }) => {
         }
 
         if (peakDetect && !wrgIncremented && !excessive) {
+            console.log(word_arr.length)
             setWrgLettTotal(p => p + 1)
             setWrgIncremented(true)
-            console.log("wrong")
+            // console.log("wrong")
         }
 
         // if the user pressed space move to next word and check the previously typed word if correct or not 
@@ -109,8 +110,6 @@ const TypingField = ({ children }: { children: any }) => {
             let [isCorrect, wrongChar] = checkTypedWord(TFstate.wordTyped, words[TFstate.HLIndex])
             if (!typedCorrect || !isCorrect) return;
             if (word === "") return inputRef.current!.value = ""
-
-            console.log(wrgLettTotal)
             TFDispatch({ type: ITFActions.SPACED })
             if (isCorrect) TPDispatch({ type: ITPActions.CORRECT, payload: wrongChar })
             else TPDispatch({ type: ITPActions.INCORRECT, payload: wrongChar })
@@ -119,7 +118,8 @@ const TypingField = ({ children }: { children: any }) => {
                 word: words[TFstate.HLIndex],
                 totalPeak: wrgLettTotal,
                 standDeviation: getStandardDeviation(rythm),
-                calcStanDev: wrgLettTotal + 1 + (getStandardDeviation(rythm, 100) / 100),
+                // calcStanDev: wrgLettTotal + 1 + (getStandardDeviation(rythm, 100) / 100),
+                calcStanDev: calculateWordScore(wrgLettTotal, getStandardDeviation(rythm)),
                 // calStandDeviation: getStandardDeviation(rythm) * (wrgLettTotal < 1 ? 1 : wrgLettTotal),
                 rythm: JSON.stringify(rythm),
                 correct: isCorrect
@@ -134,6 +134,23 @@ const TypingField = ({ children }: { children: any }) => {
         }
     }
 
+    const calculateWordScore = (wrg: number, sd: number): number => {
+        console.log(wrg, sd)
+        const range = [
+            [0, 40],
+            [15, 70],
+            [20, 100],
+            [30, 100]
+        ]
+        const wrgTotal = wrg < 4 ? wrg : 4
+        const baseInt = wrgTotal + 1
+        const decimal =
+            sd < range[wrgTotal][0] ? 0 :
+                sd > range[wrgTotal][1] ? 1 :
+                    ((sd - range[wrgTotal][0]) / range[wrgTotal][1])
+        console.log(baseInt, decimal)
+        return baseInt + decimal
+    }
 
     const calculateRyhtm = (rythm: number[]) => {
         let r: number[] = []
@@ -239,8 +256,8 @@ const TypingField = ({ children }: { children: any }) => {
         let obj: any = {};
         let objNew: any = {};
         SDList.forEach(l => {
-            obj["words_score." + l.word] = l.calcStanDev
-            objNew[l.word] = l.calcStanDev
+            obj["words_score." + l.word] = l
+            objNew[l.word] = l
         })
 
         let update_data = {
