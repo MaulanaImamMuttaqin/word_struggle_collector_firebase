@@ -140,9 +140,8 @@ const TypingField = ({ children }: { children: any }) => {
             [15, 60],
             [20, 100],
             [30, 100],
-            [50, 100]
         ]
-        const wrgTotal = wrg < 4 ? wrg : 4
+        const wrgTotal = wrg < 4 ? wrg : 3
         const baseInt = wrgTotal + 1
         const decimal =
             sd < range[wrgTotal][0] ? 0 :

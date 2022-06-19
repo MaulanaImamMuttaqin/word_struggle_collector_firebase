@@ -19,10 +19,7 @@ function TestResults({ ...props }: { TFstate: ITFState, TPstate: ITPState, SDLis
                     <>
                         <div className=" w-full p-5">
                             <p className='flex justify-between'><span>Word Typed:</span> <span>{props.TPstate.wordCount}</span></p>
-                            <p className='flex justify-between'><span>Correct Word:</span> <span>{props.TPstate.wordCorrect}</span></p>
-                            <p className='flex justify-between'><span>Wrong Word:</span> <span>{props.TPstate.wordWrong}</span></p>
                             <p className='flex justify-between'><span>Character Typed:</span> <span>{props.TPstate.charCount}</span></p>
-                            <p className='flex justify-between'><span>Incorrect Character:</span> <span>{props.TPstate.charWrong}</span></p>
                             <p className='flex justify-between'><span>Accuracy</span> <span>{props.TPstate.accuracy} %</span></p>
                         </div>
                         <div className="center text-6xl  font-bold text-blue-500 ">
@@ -33,6 +30,7 @@ function TestResults({ ...props }: { TFstate: ITFState, TPstate: ITPState, SDLis
                     <>
                         <div className=" w-full p-5 overflow-y-auto">
                             <h2 className="tracking-wide font-semibold text-center">ini adalah hasil nilai dari kata yang sudah diketik</h2>
+                            <h3 className="text-sm mb-5">score dari 1 hingga 4</h3>
                             <h3 className="text-sm mb-5">(makin kecil makin bagus)</h3>
                             <div className="p-2 text-left">
                                 {/* <pre>{JSON.stringify(reversed, null, 1)}</pre> */}
