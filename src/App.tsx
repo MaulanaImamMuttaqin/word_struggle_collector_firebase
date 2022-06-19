@@ -6,9 +6,12 @@ import TypingFieldSinglePlayer from './components/TypingFieldSinglePlayer';
 // import { storage } from './utils/storage';
 import Wrapper from './components/Wrapper';
 import AuthContextProvider from './components/AuthContext/AuthContextProvider';
+import { useEffect } from 'react';
 
 function App() {
-
+  useEffect(() => {
+    document.title = "Speed Check"
+  }, [])
   // const [count, setCount] = useState<any>(0)
   // const docRef = doc(db, "users_scores", "GlFBlSL87ou8GrvljiWv")
   // const docRef = doc(db, "users_scores", "GlFBlSL87ou8GrvljiWv")

@@ -33,7 +33,6 @@ function TestResults({ ...props }: { TFstate: ITFState, TPstate: ITPState, SDLis
                             <h3 className="text-sm mb-5">score dari 1 - 5</h3>
                             <h3 className="text-sm mb-5">(makin kecil makin bagus)</h3>
                             <div className="p-2 text-left">
-                                {/* <pre>{JSON.stringify(reversed, null, 1)}</pre> */}
                                 {sorted.map((w: any, i) => (
                                     <p key={i}>{w.word} : {w.calcStanDev}</p>
                                 ))}
