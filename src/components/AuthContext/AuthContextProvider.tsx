@@ -41,7 +41,6 @@ function AuthContextProvider({ children }: { children: JSX.Element }) {
         await setDoc(doc(db, "users_scores", data.uid), {
           "speed": 0,
           "timestamp": serverTimestamp(),
-          "total_test": 0,
           "words_score": []
         });
       }

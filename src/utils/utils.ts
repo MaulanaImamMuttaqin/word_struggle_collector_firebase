@@ -1,5 +1,6 @@
 import typingFieldStates from "../components/TypingField/states/typingFieldStates"
 import { words_list } from "../constant/words"
+
 export const getStandardDeviation = (array: Array<number>, max?: number | null): number => {
     const n = array.length
     const mean = array.reduce((a, b) => a + b) / n
@@ -42,3 +43,14 @@ export const deviceType = () => {
     }
     return "desktop";
 };
+
+export const makeid = (length: number) => {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() *
+            charactersLength));
+    }
+    return result;
+}

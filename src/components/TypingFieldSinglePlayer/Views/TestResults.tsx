@@ -29,8 +29,8 @@ function TestResults({ ...props }: { TFstate: ITFState, TPstate: ITPState, SDLis
 
                     <>
                         <div className=" w-full p-5 overflow-y-auto">
-                            <h2 className="tracking-wide font-semibold text-center">ini adalah hasil nilai dari kata yang sudah diketik</h2>
-                            <h3 className="text-sm mb-5">score dari 1 hingga 4</h3>
+                            <h2 className="tracking-wide font-semibold text-center">ini adalah score kelancaran dalam mengetikan kata</h2>
+                            <h3 className="text-sm mb-5">score dari 1 - 5</h3>
                             <h3 className="text-sm mb-5">(makin kecil makin bagus)</h3>
                             <div className="p-2 text-left">
                                 {/* <pre>{JSON.stringify(reversed, null, 1)}</pre> */}

@@ -1,9 +1,9 @@
-import { collection, doc, getDoc, increment, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore'
+import { arrayUnion, collection, doc, getDoc, increment, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore'
 import React, { ChangeEvent, useContext, useEffect, useState } from 'react'
 import useKeyPress from '../../customHooks/useKeyPress'
 import { db } from '../../firebase'
 // import { storage } from '../../utils/storage'
-import { calculateTypingSpeed, getStandardDeviation, get_words_random } from '../../utils/utils'
+import { calculateTypingSpeed, getStandardDeviation, get_words_random, makeid } from '../../utils/utils'
 import { AuthContext } from '../AuthContext/AuthContextProvider'
 import { ITFActions, ITPActions } from './Interfaces'
 import Reducers from './reducers/Reducers'
@@ -22,6 +22,8 @@ const TypingField = ({ children }: { children: any }) => {
     const { docRef, name, userData } = useContext(AuthContext)
     const { TFstate, TPstate, TFDispatch, TPDispatch } = Reducers()
     const { letterRef, inputRef, exessElContainer, focusCoverRef } = Refs()
+    const [testId, setTestId] = useState<string>(makeid(9))
+    const [dataUpdated, setDataUpdated] = useState<boolean>(false)
     const mousePressed = useKeyPress("mouse", "mouse", window)
 
     // const [name, setName] = useState(storage.getName() || "")
@@ -115,6 +117,7 @@ const TypingField = ({ children }: { children: any }) => {
             else TPDispatch({ type: ITPActions.INCORRECT, payload: wrongChar })
             let rythm = calculateRyhtm(ryhtmWord)
             setSDList(p => [...p, {
+                testId: testId,
                 word: words[TFstate.HLIndex],
                 totalPeak: wrgLettTotal,
                 standDeviation: getStandardDeviation(rythm),
@@ -138,9 +141,10 @@ const TypingField = ({ children }: { children: any }) => {
         const range = [
             [0, 40],
             [15, 60],
-            [20, 100],
-            [30, 100],
+            [30, 80],
+            [45, 100],
         ]
+        // 1    2     3     4
         const wrgTotal = wrg < 4 ? wrg : 3
         const baseInt = wrgTotal + 1
         const decimal =
@@ -194,7 +198,10 @@ const TypingField = ({ children }: { children: any }) => {
             let [net, accuracy] = calculateTypingSpeed(TPstate.charCount, TPstate.charWrong)
             TPDispatch({ type: ITPActions.FINISH, payload: { net, accuracy } })
             TFDispatch({ type: ITFActions.STOP })
-            updateData()
+            if (!dataUpdated) {
+                updateData(net as number)
+                setDataUpdated(true)
+            }
             clearInterval(timerInterval)
             // clearInterval(rythmInterval)
         }
@@ -230,6 +237,8 @@ const TypingField = ({ children }: { children: any }) => {
 
     const restart = (new_test?: boolean) => {
         if (new_test) setWords(get_words_random())
+        setTestId(makeid(9))
+        setDataUpdated(false)
         setSDList([])
         setRythmWord([])
         restart_letter_styles(TFstate.HLIndex)
@@ -251,40 +260,25 @@ const TypingField = ({ children }: { children: any }) => {
     }
     // console.log(userData)
 
-    const updateData = async () => {
+    const updateData = async (speed: number) => {
         let obj: any = {};
-        let objNew: any = {};
         SDList.forEach(l => {
             obj["words_score." + l.word] = l
-            objNew[l.word] = l
         })
 
         let update_data = {
-            "speed": TPstate.speed,
+            "speed": arrayUnion({
+                testId: testId,
+                speed: speed
+            }),
             "timestamp": serverTimestamp(),
             "total_test": increment(1),
+            "word_scored": increment(Object.keys(obj).length),
             ...obj
         }
 
-        let new_data = {
-            "speed": TPstate.speed,
-            "timestamp": serverTimestamp(),
-            "total_test": 1,
-            "words_score": objNew
-        }
 
-        // if (userData) {
-        //     console.log("update data")
         await updateDoc(docRef, update_data);
-        // } else {
-        //     console.log("set data")
-        //     await setDoc(docRef, new_data);
-        // }
-        // try {
-        //     await updateDoc(docRef, update_data);
-        // } catch (e) {
-        //     await setDoc(docRef, new_data);
-        // }
     }
 
     const focusInput = (): void => {
