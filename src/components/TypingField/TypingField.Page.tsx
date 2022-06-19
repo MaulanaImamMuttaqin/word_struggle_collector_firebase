@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, query, setDoc, updateDoc, where } from 'firebase/firestore'
+import { collection, doc, getDoc, increment, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore'
 import React, { ChangeEvent, useContext, useEffect, useState } from 'react'
 import useKeyPress from '../../customHooks/useKeyPress'
 import { db } from '../../firebase'
@@ -19,7 +19,7 @@ import Refs from './refs'
 
 
 const TypingField = ({ children }: { children: any }) => {
-    const { docRef, name } = useContext(AuthContext)
+    const { docRef, name, userData } = useContext(AuthContext)
     const { TFstate, TPstate, TFDispatch, TPDispatch } = Reducers()
     const { letterRef, inputRef, exessElContainer, focusCoverRef } = Refs()
     const mousePressed = useKeyPress("mouse", "mouse", window)
@@ -121,8 +121,7 @@ const TypingField = ({ children }: { children: any }) => {
                 // calcStanDev: wrgLettTotal + 1 + (getStandardDeviation(rythm, 100) / 100),
                 calcStanDev: calculateWordScore(wrgLettTotal, getStandardDeviation(rythm)),
                 // calStandDeviation: getStandardDeviation(rythm) * (wrgLettTotal < 1 ? 1 : wrgLettTotal),
-                rythm: JSON.stringify(rythm),
-                correct: isCorrect
+                rythm: JSON.stringify(rythm)
             }])
             inputRef.current!.value = ""
             setRythmWord([])
@@ -138,9 +137,10 @@ const TypingField = ({ children }: { children: any }) => {
         console.log(wrg, sd)
         const range = [
             [0, 40],
-            [15, 70],
+            [15, 60],
             [20, 100],
-            [30, 100]
+            [30, 100],
+            [50, 100]
         ]
         const wrgTotal = wrg < 4 ? wrg : 4
         const baseInt = wrgTotal + 1
@@ -250,7 +250,7 @@ const TypingField = ({ children }: { children: any }) => {
             })
         }
     }
-
+    // console.log(userData)
 
     const updateData = async () => {
         let obj: any = {};
@@ -262,21 +262,30 @@ const TypingField = ({ children }: { children: any }) => {
 
         let update_data = {
             "speed": TPstate.speed,
-            "timestamp": Math.round(new Date().getTime() / 1000),
+            "timestamp": serverTimestamp(),
+            "total_test": increment(1),
             ...obj
         }
 
         let new_data = {
             "speed": TPstate.speed,
-            "timestamp": Math.round(new Date().getTime() / 1000),
+            "timestamp": serverTimestamp(),
+            "total_test": 1,
             "words_score": objNew
         }
 
-        try {
-            await updateDoc(docRef, update_data);
-        } catch (e) {
-            await setDoc(docRef, new_data);
-        }
+        // if (userData) {
+        //     console.log("update data")
+        await updateDoc(docRef, update_data);
+        // } else {
+        //     console.log("set data")
+        //     await setDoc(docRef, new_data);
+        // }
+        // try {
+        //     await updateDoc(docRef, update_data);
+        // } catch (e) {
+        //     await setDoc(docRef, new_data);
+        // }
     }
 
     const focusInput = (): void => {
