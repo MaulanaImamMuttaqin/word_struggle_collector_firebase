@@ -306,8 +306,9 @@ const TypingField = ({ children }: { children: any }) => {
         focusInput
     }
 
-    return <div className="h-screen center">
+    return <div className="h-screen center ">
         {children(props)}
+        <h2 className="text-xl tracking-widest text-white absolute self-end e">Tekan Spasi untuk ke kata selanjutnya</h2>
     </div>
 
 }
