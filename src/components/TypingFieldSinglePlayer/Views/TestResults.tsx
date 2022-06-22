@@ -2,9 +2,52 @@
 import { ITFState, ITPState } from '../../TypingField/Interfaces'
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/solid'
 import React, { useState } from 'react'
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+} from 'chart.js';
+import { Line } from 'react-chartjs-2';
+import { faker } from '@faker-js/faker';
+// import faker from 'faker';
 
 
-function TestResults({ ...props }: { TFstate: ITFState, TPstate: ITPState, SDList: Array<string> }) {
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend
+);
+
+export const options = {
+    responsive: true,
+    scales: {
+        yAxis: {
+            min: 0,
+            max: 100,
+        }
+    },
+    plugins: {
+        legend: {
+            position: 'top' as const,
+        },
+        title: {
+            display: true,
+            text: 'Rythm Stability',
+        },
+    },
+};
+
+
+function TestResults({ ...props }: { TFstate: ITFState, TPstate: ITPState, SDList: Array<any> }) {
     const [showDetail, setShowDetail] = useState<boolean>(false)
     let reversed = props.SDList.slice().reverse()
     let sorted = [...props.SDList].sort((a: any, b: any) => {
@@ -53,11 +96,31 @@ function TestResults({ ...props }: { TFstate: ITFState, TPstate: ITPState, SDLis
 
             </div>
 
-            {/* <div className={`h-[370px] w-[450px] px-5 ml-10 ${(props.TFstate.timer === 0 && !props.TFstate.typingStarted) && 'translate-y-10 opacity-0 w-0 p-0 ml-0'} overflow-hidden  transition-all  text-white border border-white rounded-xl`}>
-                <div className='text-left w-full h-full pt-2 overflow-y-auto'>
-                    <pre>{JSON.stringify(reversed, null, 1)}</pre>
+            <div className={`h-[370px] w-[450px] px-5 ml-10 ${(props.TFstate.timer === 0 && !props.TFstate.typingStarted) && 'translate-y-10 opacity-0 w-0 p-0 ml-0'} overflow-hidden  transition-all  text-white border border-white rounded-xl`}>
+                <div className='text-left w-full h-full center flex-col pt-2 overflow-y-auto'>
+                    {/* <pre>{JSON.stringify(reversed, null, 1)}</pre> */}
+                    {
+                        reversed.length > 0 &&
+                        <>
+                            <Line
+                                options={options}
+                                data={{
+                                    labels: reversed[0].rythm.map((r: number, i: number) => i),
+                                    datasets: [
+                                        {
+                                            label: 'Dataset 1',
+                                            data: reversed[0].rythm,
+                                            borderColor: 'rgb(255, 99, 132)',
+                                            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                                        },
+                                    ],
+                                }} />
+                            <p className='text-center'>score: {reversed[0].calcStanDev}</p>
+                            <p className='text-center'>SD: {reversed[0].standDeviation}</p>
+                        </>
+                    }
                 </div>
-            </div> */}
+            </div>
         </>
     )
 }

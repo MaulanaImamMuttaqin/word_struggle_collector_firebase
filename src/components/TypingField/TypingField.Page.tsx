@@ -101,7 +101,7 @@ const TypingField = ({ children }: { children: any }) => {
         }
 
         if (peakDetect && !wrgIncremented && !excessive) {
-            console.log(word_arr.length)
+            // console.log(word_arr.length)
             setWrgLettTotal(p => p + 1)
             setWrgIncremented(true)
             // console.log("wrong")
@@ -124,7 +124,8 @@ const TypingField = ({ children }: { children: any }) => {
                 // calcStanDev: wrgLettTotal + 1 + (getStandardDeviation(rythm, 100) / 100),
                 calcStanDev: calculateWordScore(wrgLettTotal, getStandardDeviation(rythm)),
                 // calStandDeviation: getStandardDeviation(rythm) * (wrgLettTotal < 1 ? 1 : wrgLettTotal),
-                rythm: JSON.stringify(rythm)
+                // rythm: JSON.stringify(rythm)
+                rythm: rythm
             }])
             inputRef.current!.value = ""
             setRythmWord([])
@@ -137,22 +138,25 @@ const TypingField = ({ children }: { children: any }) => {
     }
 
     const calculateWordScore = (wrg: number, sd: number): number => {
-        console.log(wrg, sd)
-        const range = [
-            [0, 40],
-            [15, 60],
-            [30, 80],
-            [45, 100],
-        ]
+        // console.log(wrg, sd)
+        // const range = [
+        //     [0, 40],
+        //     [15, 60],
+        //     [30, 80],
+        //     [45, 100],
+        // ]
+
         // 1    2     3     4
-        const wrgTotal = wrg < 4 ? wrg : 3
-        const baseInt = wrgTotal + 1
-        const decimal =
-            sd < range[wrgTotal][0] ? 0 :
-                sd > range[wrgTotal][1] ? 1 :
-                    ((sd - range[wrgTotal][0]) / range[wrgTotal][1])
-        console.log(baseInt, decimal)
-        return baseInt + decimal
+        // const wrgTotal = wrg < 4 ? wrg : 3
+        // const baseInt = wrgTotal + 1
+        // const decimal =
+        //     sd < range[wrgTotal][0] ? 0 :
+        //         sd > range[wrgTotal][1] ? 1 :
+        //             ((sd - range[wrgTotal][0]) / range[wrgTotal][1])
+        // console.log(baseInt, decimal)
+        let calculate = ((sd / 70) * 4) + 1
+        return calculate > 5 ? 5 : calculate
+        // return baseInt + decimal
     }
 
     const calculateRyhtm = (rythm: number[]) => {
@@ -264,6 +268,7 @@ const TypingField = ({ children }: { children: any }) => {
         let obj: any = {};
         SDList.forEach(l => {
             obj["words_score." + l.word] = l
+            obj[`words_score.${l.word}.average`] = arrayUnion(l.calcStanDev)
         })
 
         let update_data = {
