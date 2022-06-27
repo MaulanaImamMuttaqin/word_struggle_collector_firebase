@@ -116,6 +116,7 @@ function TestResults({ ...props }: { TFstate: ITFState, TPstate: ITPState, SDLis
                                     ],
                                 }} />
                             <p className='text-center'>score: {reversed[0].calcStanDev}</p>
+                            <p className='text-center'>score: {JSON.stringify(reversed[0].rythm)}</p>
                             <p className='text-center'>SD: {reversed[0].standDeviation}</p>
                         </>
                     }
